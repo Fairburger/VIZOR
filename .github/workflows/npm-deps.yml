@@ -1,0 +1,29 @@
+name: RC4 npm dependency artifact
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install exact dependency graph
+        run: npm install --include=dev
+      - name: Pack node_modules
+        run: tar -czf rc4-node-modules.tgz node_modules
+      - name: Upload node_modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc4-node-modules
+          path: rc4-node-modules.tgz
+      - name: Upload package lock
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc4-package-lock
+          path: package-lock.json
